@@ -10,7 +10,8 @@ services:
     rootDir: api
     plan: free
     buildCommand: npm ci && npx prisma generate
-    startCommand: npm run prisma:migrate:deploy && npm run db:seed && npm start
+    preDeployCommand: npm run prisma:migrate:deploy && npm run db:seed
+    startCommand: npm start
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
@@ -38,11 +39,12 @@ services:
       - key: MAX_UPLOAD_SIZE_MB
         value: 10
 
-  - type: static
+  - type: web
     name: photo-opp-web
+    runtime: static
     rootDir: web
     buildCommand: npm ci && npm run build
-    staticPublishPath: dist
+    staticPublishPath: web/dist
     envVars:
       - key: VITE_API_URL
         sync: false
