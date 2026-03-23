@@ -1,0 +1,113 @@
+name: photo_opp
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: development
+      HOST: 0.0.0.0
+      PORT: 3333
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
+      APP_BASE_URL: http://localhost:${API_PORT}
+      CORS_ORIGIN: http://localhost:${WEB_PORT}
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "${API_PORT}:3333"
+    volumes:
+      - ./api:/workspace/api
+      - ./scripts:/workspace/scripts
+      - api_node_modules:/workspace/api/node_modules
+      - api_storage:/workspace/api/storage
+    command: ["sh", "/workspace/scripts/dev-entrypoint.sh", "api"]
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://localhost:3333/health').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: development
+      VITE_API_URL: ${VITE_API_URL}
+      VITE_API_PROXY_TARGET: http://api:3333
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "${WEB_PORT}:5173"
+    volumes:
+      - ./web:/workspace/web
+      - ./scripts:/workspace/scripts
+      - web_node_modules:/workspace/web/node_modules
+    command: ["sh", "/workspace/scripts/dev-entrypoint.sh", "web"]
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://localhost:5173').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 15
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    restart: unless-stopped
+    depends_on:
+      web:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+    command: ["http", "http://web:5173", "--log=stdout"]
+    ports:
+      - "4040:4040"
+
+volumes:
+  postgres_data:
+  api_node_modules:
+  web_node_modules:
+  api_storage:

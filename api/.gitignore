@@ -1,1 +1,10 @@
-.DS_Store
+.env
+node_modules/
+storage/originals/*
+storage/framed/*
+storage/qrcodes/*
+storage/.tmp/*
+!storage/originals/.gitkeep
+!storage/framed/.gitkeep
+!storage/qrcodes/.gitkeep
+!storage/.tmp/.gitkeep

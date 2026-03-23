@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  PROMOTER
+}
+
+enum PhotoStatus {
+  PROCESSING
+  READY
+  FAILED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  role         Role
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  photos Photo[]
+  logs   Log[]
+
+  @@map("users")
+}
+
+model Photo {
+  id          String      @id @default(cuid())
+  originalUrl String      @map("original_url")
+  framedUrl   String      @map("framed_url")
+  downloadUrl String      @map("download_url")
+  qrCodeUrl   String?     @map("qr_code_url")
+  qrCodeValue String?     @map("qr_code_value")
+  status      PhotoStatus @default(PROCESSING)
+  frameName   String?     @map("frame_name")
+  reaction    String?
+  metadata    Json?
+  promoterId  String      @map("promoter_id")
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  promoter User @relation(fields: [promoterId], references: [id])
+
+  @@index([promoterId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("photos")
+}
+
+model Log {
+  id             String   @id @default(cuid())
+  requestId      String?  @map("request_id")
+  userId         String?  @map("user_id")
+  emailAttempted String?  @map("email_attempted")
+  action         String
+  method         String
+  route          String
+  ip             String
+  requestBody    Json?    @map("request_body")
+  responseStatus Int      @map("response_status")
+  metadata       Json?
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([action])
+  @@index([route])
+  @@index([createdAt])
+  @@map("logs")
+}
+
+model PasswordResetToken {
+  id         String    @id @default(cuid())
+  email      String
+  otp        String
+  resetToken String?   @unique @map("reset_token")
+  expiresAt  DateTime  @map("expires_at")
+  usedAt     DateTime? @map("used_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  @@index([email])
+  @@map("password_reset_tokens")
+}
