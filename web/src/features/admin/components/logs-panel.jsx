@@ -37,7 +37,7 @@ export function LogsPanel({
   onLimitChange,
 }) {
   return (
-    <section className="admin-content-card relative flex h-full flex-col rounded-[28px] p-5">
+    <section className="admin-content-card relative flex flex-col rounded-[28px] p-5">
       {/* Header */}
       <div className="shrink-0 space-y-4 border-b border-stone-100 pb-4">
         <div className="flex flex-col gap-3 xl:flex-row xl:items-end xl:justify-between">
@@ -127,7 +127,7 @@ export function LogsPanel({
       </div>
 
       {/* Results */}
-      <div className="relative flex min-h-0 flex-1 flex-col pt-4">
+      <div className="relative flex flex-col pt-4">
         {loading ? (
           <div className="absolute inset-0 z-10 grid place-items-center rounded-[22px] bg-white/80 backdrop-blur-sm">
             <div className="rounded-[20px] border border-stone-100 bg-white px-6 py-5 text-center shadow-[0_8px_32px_-8px_rgba(0,0,0,0.12)]">
@@ -140,7 +140,7 @@ export function LogsPanel({
         {logs.items.length ? (
           <>
             {/* Mobile cards */}
-            <div className="admin-scrollbar flex-1 overflow-y-auto md:hidden">
+            <div className="md:hidden">
               <div className="space-y-2">
                 {logs.items.map((log) => (
                   <button
@@ -176,7 +176,7 @@ export function LogsPanel({
             </div>
 
             {/* Desktop table */}
-            <div className="admin-scrollbar hidden min-h-0 flex-1 overflow-auto rounded-[22px] border border-stone-100 md:block">
+            <div className="admin-scrollbar hidden overflow-x-auto rounded-[22px] border border-stone-100 md:block">
               <table className="w-full min-w-[820px] border-collapse text-sm">
                 <thead className="sticky top-0 z-10 bg-stone-50">
                   <tr className="border-b border-stone-100">

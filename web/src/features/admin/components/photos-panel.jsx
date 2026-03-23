@@ -20,7 +20,7 @@ export function PhotosPanel({
   onLimitChange,
 }) {
   return (
-    <section className="admin-content-card relative flex h-full flex-col rounded-[28px] p-5">
+    <section className="admin-content-card relative flex flex-col rounded-[28px] p-5">
       {/* Header */}
       <div className="shrink-0 space-y-4 border-b border-stone-100 pb-4">
         <div className="flex flex-col gap-3 xl:flex-row xl:items-end xl:justify-between">
@@ -169,7 +169,7 @@ export function PhotosPanel({
       </div>
 
       {/* Results */}
-      <div className="relative flex min-h-0 flex-1 flex-col pt-4">
+      <div className="relative flex flex-col pt-4">
         {loading ? (
           <div className="absolute inset-0 z-10 grid place-items-center rounded-[22px] bg-white/80 backdrop-blur-sm">
             <div className="rounded-[20px] border border-stone-100 bg-white px-6 py-5 text-center shadow-[0_8px_32px_-8px_rgba(0,0,0,0.12)]">
@@ -180,7 +180,7 @@ export function PhotosPanel({
         ) : null}
 
         {photos.items.length ? (
-          <div className="admin-scrollbar min-h-0 flex-1 overflow-y-auto pr-1">
+          <div className="pr-1">
             <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-3">
               {photos.items.map((photo) => (
                 <button
