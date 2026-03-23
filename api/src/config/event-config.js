@@ -1,4 +1,5 @@
 import { env } from './env.js';
+import { buildPublicUrl } from '../shared/utils/build-public-url.js';
 
 const EVENT_ASSET_PREFIX = '/event-assets';
 const DEFAULT_EVENT_KEY = 'nexlab-default';
@@ -112,7 +113,7 @@ export function sanitizeEventConfigForClient(eventConfig) {
     frameOptions: eventConfig.frameOptions.map((option) => ({
       value: option.value,
       label: option.label,
-      assetUrl: option.assetUrl,
+      assetUrl: buildPublicUrl(env.APP_BASE_URL, option.assetUrl),
       outputWidth: option.outputWidth,
       outputHeight: option.outputHeight,
       window: option.window

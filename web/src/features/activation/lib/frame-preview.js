@@ -1,5 +1,28 @@
 import { FALLBACK_ACTIVATION_CONFIG, getFrameOption } from './frame-presets.js'
 
+function getApiOrigin() {
+  const apiUrl = (import.meta.env.VITE_API_URL || '/api/v1').replace(/\/$/, '')
+
+  try {
+    return new URL(apiUrl).origin
+  } catch {
+    return typeof window !== 'undefined' ? window.location.origin : ''
+  }
+}
+
+function resolveFrameAssetUrl(url) {
+  if (!url) {
+    return url
+  }
+
+  try {
+    return new URL(url).toString()
+  } catch {
+    const apiOrigin = getApiOrigin()
+    return apiOrigin ? new URL(url, `${apiOrigin}/`).toString() : url
+  }
+}
+
 async function loadImageFromBlob(blob) {
   if ('createImageBitmap' in window) {
     return createImageBitmap(blob)
@@ -24,14 +47,17 @@ async function loadImageFromBlob(blob) {
 async function loadImageFromUrl(url) {
   return new Promise((resolve, reject) => {
     const image = new Image()
+    image.crossOrigin = 'anonymous'
     image.onload = () => resolve(image)
     image.onerror = reject
-    image.src = url
+    image.src = resolveFrameAssetUrl(url)
   })
 }
 
 export function getFrameOverlayUrl(eventConfig, frameName) {
-  return getFrameOption(eventConfig || FALLBACK_ACTIVATION_CONFIG, frameName).assetUrl
+  return resolveFrameAssetUrl(
+    getFrameOption(eventConfig || FALLBACK_ACTIVATION_CONFIG, frameName).assetUrl,
+  )
 }
 
 export async function createFramedPreviewBlobFromConfig(sourceBlob, eventConfig, frameName) {
