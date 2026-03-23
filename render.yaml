@@ -10,8 +10,7 @@ services:
     rootDir: api
     plan: free
     buildCommand: npm ci && npx prisma generate
-    preDeployCommand: npm run prisma:migrate:deploy && npm run db:seed
-    startCommand: npm start
+    startCommand: npm run prisma:migrate:deploy && npm run db:seed && npm start
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
