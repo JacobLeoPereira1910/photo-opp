@@ -25,10 +25,10 @@ function formatExpiry(expiresAt) {
 function getStateCopy(status) {
   if (status === 'ready') {
     return {
-      title: 'Sua foto esta pronta',
+      title: 'Sua foto está pronta',
       description:
-        'Use o botao abaixo para baixar a foto final com a moldura oficial do evento.',
-      badge: 'QR valido',
+        'Use o botão abaixo para baixar a foto final com a moldura oficial do evento.',
+      badge: 'QR válido',
       tone: '#2563eb'
     };
   }
@@ -37,7 +37,7 @@ function getStateCopy(status) {
     return {
       title: 'Este QR Code expirou',
       description:
-        'Volte ao promotor para gerar um novo acesso. O link de download nao fica disponivel apos a expiracao.',
+        'Volte ao promotor para gerar um novo acesso. O link de download não fica disponível após a expiração.',
       badge: 'Acesso expirado',
       tone: '#b45309'
     };
@@ -45,19 +45,19 @@ function getStateCopy(status) {
 
   if (status === 'processing') {
     return {
-      title: 'Sua foto ainda esta sendo preparada',
+      title: 'Sua foto ainda está sendo preparada',
       description:
-        'A captura foi recebida, mas o arquivo final ainda nao esta disponivel. Aguarde alguns instantes e tente novamente.',
+        'A captura foi recebida, mas o arquivo final ainda não está disponível. Aguarde alguns instantes e tente novamente.',
       badge: 'Processando',
       tone: '#4f46e5'
     };
   }
 
   return {
-    title: 'Nao encontramos esta foto',
+    title: 'Não encontramos esta foto',
     description:
-      'Confira se o QR Code esta correto ou retorne ao promotor para gerar um novo acesso.',
-    badge: 'Nao encontrado',
+      'Confira se o QR Code está correto ou retorne ao promotor para gerar um novo acesso.',
+    badge: 'Não encontrado',
     tone: '#be123c'
   };
 }
@@ -67,7 +67,8 @@ export function renderPublicPhotoAccessPage({
   eventName,
   downloadUrl,
   framedUrl,
-  expiresAt
+  expiresAt,
+  frontendUrl = 'http://localhost:5173'
 }) {
   const copy = getStateCopy(status);
   const formattedExpiry = formatExpiry(expiresAt);
@@ -183,6 +184,29 @@ export function renderPublicPhotoAccessPage({
         text-align: center;
         color: #78716c;
       }
+
+      .back-btn {
+        margin-top: 18px;
+        display: inline-flex;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        border-radius: 18px;
+        padding: 14px 18px;
+        background: transparent;
+        color: #44403c;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        border: 1px solid rgba(28, 25, 23, 0.14);
+        cursor: pointer;
+        transition: background 150ms;
+      }
+
+      .back-btn:hover {
+        background: rgba(28, 25, 23, 0.05);
+      }
     </style>
   </head>
   <body>
@@ -208,7 +232,10 @@ export function renderPublicPhotoAccessPage({
           ? `<a class="cta" href="${escapeHtml(downloadUrl)}">Baixar foto final</a>`
           : ''
       }
-      <p class="helper">Se precisar de um novo acesso, procure o promotor no ponto de ativacao.</p>
+      <p class="helper">Se precisar de um novo acesso, procure o promotor no ponto de ativação.</p>
+      <button class="back-btn" onclick="history.length > 1 ? history.back() : window.location.href='${escapeHtml(frontendUrl)}/activation'">
+        ← Voltar ao início
+      </button>
     </main>
   </body>
 </html>`;

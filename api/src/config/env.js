@@ -39,6 +39,7 @@ export const env = {
   ACTIVE_EVENT_KEY: process.env.ACTIVE_EVENT_KEY || 'nexlab-default',
   DATABASE_URL: process.env.DATABASE_URL,
   APP_BASE_URL: process.env.APP_BASE_URL || 'http://localhost:3333',
+  APP_FRONTEND_URL: process.env.APP_FRONTEND_URL || 'http://localhost:5173',
   APP_TIMEZONE: process.env.APP_TIMEZONE || 'America/Sao_Paulo',
   CORS_ORIGIN: parseCorsOrigin(process.env.CORS_ORIGIN),
   STORAGE_PUBLIC_BASE_PATH: normalizeStoragePublicPath(

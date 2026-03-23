@@ -1,4 +1,5 @@
 import { BadRequestError } from '../../../errors/app-error.js';
+import { env } from '../../../config/env.js';
 import { parseSchema } from '../../../shared/utils/parse-schema.js';
 import { sanitizeLogPayload } from '../../../shared/utils/sanitize-log-payload.js';
 import { renderPublicPhotoAccessPage } from './public-photo-access-page.js';
@@ -134,7 +135,8 @@ export class ActivationController {
       eventName: result.event?.name,
       downloadUrl: result.photo?.downloadUrl,
       framedUrl: result.photo?.framedUrl,
-      expiresAt: result.expiresAt
+      expiresAt: result.expiresAt,
+      frontendUrl: env.APP_FRONTEND_URL
     });
 
     reply.header('content-type', 'text/html; charset=utf-8');
