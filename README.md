@@ -1,4 +1,4 @@
-# Photo Opp
+# Prova PL Fullstack - Nex Lab
 
 Aplicação full stack desenvolvida, com fluxo do promotor, processamento da foto com moldura oficial, entrega por QR Code e painel administrativo.
 
